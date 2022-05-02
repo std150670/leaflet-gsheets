@@ -136,7 +136,7 @@ function addGeoms(data) {
           // This zooms the map to the clicked geometry
           // Uncomment to enable
           // map.fitBounds(e.target.getBounds());
-           console.log("hey - 3");
+
           // if this isn't added, then map.click is also fired!
           L.DomEvent.stopPropagation(e);
 
@@ -189,9 +189,6 @@ function addPoints(data) {
     var markerTo =  L.circleMarker([data[row].lat, data[row].lon], { color: "#4AFF00", radius: 10 });
     var from = markerFrom.getLatLng();
     var to = markerTo.getLatLng();
-    //markerFrom.bindPopup('Delhi ' + (from).toString());
-    //markerTo.bindPopup('Mumbai ' + (to).toString());
-    //map.addLayer(markerTo);
     map.addLayer(markerFrom);
     getDistance(from, to, data[row].name);
 
@@ -224,7 +221,7 @@ if ( kmLimit > (from.distanceTo(to)).toFixed(0)/1000 ) {
   marker.on({
     
      mouseover: function (e) {
-       console.log("hey");
+  
    //    L.marker([51.5, -0.09]).addTo(map)
   //.bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
   //.openPopup();
@@ -254,7 +251,7 @@ if ( kmLimit > (from.distanceTo(to)).toFixed(0)/1000 ) {
   }
 
 } else {
- console.log("The entry with name " + data[row].name + "and description" + data[row].description + " was excluded from the list due to distance limitation!");
+ console.log("The entry with name " + data[row].name + " was excluded from the list due to distance limitation!");
 }
 
 
