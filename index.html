@@ -21,10 +21,19 @@ html, body, #map {
     word-break: break-word;
     margin-right: 40px;
 }
+#locateButton {
+  position: absolute;
+  top: 25px;
+  right: 1100px;
+  padding: 10px;
+  z-index: 400;
+  }
         </style>
     </head>
     <body>
-        <div id="map"></div>
+        <div id="map">     
+        </div>
+        <button id="locateButton" onclick="locateUser();" >Locate me!</button>
         <script src="js/leaflet.js"></script>
         <script src="js/leaflet-sidebar.js"></script>
         <script src="js/leaflet.awesome-markers.min.js"></script>
