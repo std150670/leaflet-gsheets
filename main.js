@@ -181,6 +181,9 @@ function addPoints(data) {
       
        mouseover: function (e) {
          console.log("hey");
+         L.marker([51.5, -0.09]).addTo(map)
+    .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
+    .openPopup();
         },
       click: function (e) {
         console.log("GeeksforGeeks");
