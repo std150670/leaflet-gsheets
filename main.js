@@ -25,7 +25,6 @@ let panelID = "my-info-panel";
 function init() {
   // Create a new Leaflet map centered on the continental US
   map = L.map("map").setView([51.5, -0.1], 14);
-console.log("GeeksforGeeks -");
   // This is the Carto Positron basemap
   L.tileLayer(
     "https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}{r}.png",
@@ -106,12 +105,14 @@ function addGeoms(data) {
   L.geoJSON(fc, {
     onEachFeature: function (feature, layer) {
       layer.on({
-        mouseout: function (e) {
-          e.target.setStyle(geomStyle);
-        },
-        mouseover: function (e) {
+        
+           mouseover: function (e) {
           console.log("hey - 2");
           e.target.setStyle(geomHoverStyle);
+           e.target.bindTooltip("You clicked region: " + "D").openTooltip();
+        },
+        mouseout: function (e) {
+          e.target.setStyle(geomStyle);
         },
         click: function (e) {
           // This zooms the map to the clicked geometry
