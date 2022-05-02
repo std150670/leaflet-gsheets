@@ -177,6 +177,10 @@ function addPoints(data) {
       },
     };
     marker.on({
+      
+       mouseover: function (e) {
+         console.log("hey");
+        },
       click: function (e) {
         L.DomEvent.stopPropagation(e);
         document.getElementById("sidebar-title").innerHTML =
