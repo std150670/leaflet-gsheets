@@ -110,14 +110,14 @@ function addGeoms(data) {
           e.target.setStyle(geomStyle);
         },
         mouseover: function (e) {
-          console.log("hey - 2")
+          console.log("hey - 2");
           e.target.setStyle(geomHoverStyle);
         },
         click: function (e) {
           // This zooms the map to the clicked geometry
           // Uncomment to enable
           // map.fitBounds(e.target.getBounds());
-
+           console.log("hey - 3");
           // if this isn't added, then map.click is also fired!
           L.DomEvent.stopPropagation(e);
 
