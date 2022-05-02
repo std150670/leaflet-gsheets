@@ -16,6 +16,7 @@ let pointsURL =
 window.addEventListener("DOMContentLoaded", init);
 
 let map;
+let actions;
 let sidebar;
 let panelID = "my-info-panel";
 
@@ -26,6 +27,19 @@ function init() {
   // Create a new Leaflet map centered on the continental US
   map = L.map("map").setView([51.5, -0.1], 14);
   // This is the Carto Positron basemap
+  map.locate({setView: true, maxZoom: 16});
+
+  function onLocationFound(e) {
+    var radius = e.accuracy;
+
+    L.marker(e.latlng).addTo(map)
+        .bindPopup("You are within " + radius + " meters from this point").openPopup();
+
+    L.circle(e.latlng, radius).addTo(map);
+}
+
+map.on('locationfound', onLocationFound);
+
   L.tileLayer(
     "https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}{r}.png",
     {
@@ -70,6 +84,10 @@ function init() {
   });
 }
 
+
+function locateUser() {
+  map.locate({setView : true});
+}
 /*
  * Expects a JSON representation of the table with properties columns
  * and a 'geometry' column that can be parsed by parseGeom()
@@ -107,9 +125,9 @@ function addGeoms(data) {
       layer.on({
         
            mouseover: function (e) {
-          console.log("hey - 2");
+          console.log(feature.properties.name);
           e.target.setStyle(geomHoverStyle);
-           e.target.bindTooltip("You clicked region: " + "D").openTooltip();
+           e.target.bindTooltip(feature.properties.name + ": " + feature.properties.description).openTooltip();
         },
         mouseout: function (e) {
           e.target.setStyle(geomStyle);
@@ -134,6 +152,14 @@ function addGeoms(data) {
   }).addTo(map);
 }
 
+//get distance
+function getDistance(from, to, name)
+{
+  //  var container = document.getElementById('distance');
+  //  container.innerHTML = ("New Delhi to Mumbai - " + (from.distanceTo(to)).toFixed(0)/1000) + ' km';
+    console.log("From London center to " + name + " distance is " + (from.distanceTo(to)).toFixed(0)/1000 + " km");
+}
+
 /*
  * addPoints is a bit simpler, as no GeoJSON is needed for the points
  */
@@ -155,61 +181,83 @@ function addPoints(data) {
 
   for (let row = 0; row < data.length; row++) {
     let marker;
-    if (markerType == "circleMarker") {
-      marker = L.circleMarker([data[row].lat, data[row].lon], {
-        radius: markerRadius,
-      });
-    } else if (markerType == "circle") {
-      marker = L.circle([data[row].lat, data[row].lon], {
-        radius: markerRadius,
-      });
-    } else {
-      marker = L.marker([data[row].lat, data[row].lon]);
-    }
-    //ADD TOOLTIP
-    marker.addTo(pointGroupLayer).bindTooltip("You clicked marker: " + "D").openTooltip();
 
-    // UNCOMMENT THIS LINE TO USE POPUPS
-    //marker.bindPopup('<h2>' + data[row].name + '</h2>There's a ' + data[row].description + ' here');
+    // calculate distance Ερώτημα 4 - 4
 
-    // COMMENT THE NEXT GROUP OF LINES TO DISABLE SIDEBAR FOR THE MARKERS
-    marker.feature = {
-      properties: {
-        name: data[row].name,
-        description: data[row].description,
-      },
-    };
-    marker.on({
-      
-       mouseover: function (e) {
-         console.log("hey");
-     //    L.marker([51.5, -0.09]).addTo(map)
-    //.bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
-    //.openPopup();
-        },
-      click: function (e) {
-        console.log("GeeksforGeeks");
-        L.DomEvent.stopPropagation(e);
-        document.getElementById("sidebar-title").innerHTML =
-          e.target.feature.properties.name;
-        document.getElementById("sidebar-content").innerHTML =
-          e.target.feature.properties.description;
-        sidebar.open(panelID);
-      },
+    var kmLimit = 4;
+    var markerFrom = L.circleMarker([51.50933336291413, -0.12836934339738812], { color: "#F00", radius: 10 });
+    var markerTo =  L.circleMarker([data[row].lat, data[row].lon], { color: "#4AFF00", radius: 10 });
+    var from = markerFrom.getLatLng();
+    var to = markerTo.getLatLng();
+    //markerFrom.bindPopup('Delhi ' + (from).toString());
+    //markerTo.bindPopup('Mumbai ' + (to).toString());
+    //map.addLayer(markerTo);
+    map.addLayer(markerFrom);
+    getDistance(from, to, data[row].name);
+
+if ( kmLimit > (from.distanceTo(to)).toFixed(0)/1000 ) {
+
+  if (markerType == "circleMarker") {
+    marker = L.circleMarker([data[row].lat, data[row].lon], {
+      radius: markerRadius,
     });
-    // COMMENT UNTIL HERE TO DISABLE SIDEBAR FOR THE MARKERS
-
-    // AwesomeMarkers is used to create fancier icons
-    let icon = L.AwesomeMarkers.icon({
-      icon: "info-circle",
-      iconColor: "white",
-      markerColor: data[row].color,
-      prefix: "fa",
-      extraClasses: "fa-rotate-0",
+  } else if (markerType == "circle") {
+    marker = L.circle([data[row].lat, data[row].lon], {
+      radius: markerRadius,
     });
-    if (!markerType.includes("circle")) {
-      marker.setIcon(icon);
-    }
+  } else {
+    marker = L.marker([data[row].lat, data[row].lon]);
+  }
+  //ADD TOOLTIP
+  marker.addTo(pointGroupLayer).bindTooltip(data[row].description).openTooltip();
+
+  // UNCOMMENT THIS LINE TO USE POPUPS
+  //marker.bindPopup('<h2>' + data[row].name + '</h2>There's a ' + data[row].description + ' here');
+
+  // COMMENT THE NEXT GROUP OF LINES TO DISABLE SIDEBAR FOR THE MARKERS
+  marker.feature = {
+    properties: {
+      name: data[row].name,
+      description: data[row].description,
+    },
+  };
+  marker.on({
+    
+     mouseover: function (e) {
+       console.log("hey");
+   //    L.marker([51.5, -0.09]).addTo(map)
+  //.bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
+  //.openPopup();
+      },
+    click: function (e) {
+      console.log("GeeksforGeeks");
+      L.DomEvent.stopPropagation(e);
+      document.getElementById("sidebar-title").innerHTML =
+        e.target.feature.properties.name;
+      document.getElementById("sidebar-content").innerHTML =
+        e.target.feature.properties.description;
+      sidebar.open(panelID);
+    },
+  });
+  // COMMENT UNTIL HERE TO DISABLE SIDEBAR FOR THE MARKERS
+
+  // AwesomeMarkers is used to create fancier icons
+  let icon = L.AwesomeMarkers.icon({
+    icon: "info-circle",
+    iconColor: "white",
+    markerColor: data[row].color,
+    prefix: "fa",
+    extraClasses: "fa-rotate-0",
+  });
+  if (!markerType.includes("circle")) {
+    marker.setIcon(icon);
+  }
+
+} else {
+ console.log("The entry with name " + data[row].name + "and description" + data[row].description + " was excluded from the list due to distance limitation!");
+}
+
+
   }
 }
 
