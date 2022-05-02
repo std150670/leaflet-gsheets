@@ -183,6 +183,7 @@ function addPoints(data) {
          console.log("hey");
         },
       click: function (e) {
+        console.log("GeeksforGeeks");
         L.DomEvent.stopPropagation(e);
         document.getElementById("sidebar-title").innerHTML =
           e.target.feature.properties.name;
