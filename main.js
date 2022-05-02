@@ -165,7 +165,8 @@ function addPoints(data) {
     } else {
       marker = L.marker([data[row].lat, data[row].lon]);
     }
-    marker.addTo(pointGroupLayer);
+    //ADD TOOLTIP
+    marker.addTo(pointGroupLayer).bindTooltip("You clicked marker: " + "D").openTooltip();
 
     // UNCOMMENT THIS LINE TO USE POPUPS
     //marker.bindPopup('<h2>' + data[row].name + '</h2>There's a ' + data[row].description + ' here');
@@ -181,9 +182,9 @@ function addPoints(data) {
       
        mouseover: function (e) {
          console.log("hey");
-         L.marker([51.5, -0.09]).addTo(map)
-    .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
-    .openPopup();
+     //    L.marker([51.5, -0.09]).addTo(map)
+    //.bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
+    //.openPopup();
         },
       click: function (e) {
         console.log("GeeksforGeeks");
