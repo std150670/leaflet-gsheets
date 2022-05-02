@@ -110,6 +110,7 @@ function addGeoms(data) {
           e.target.setStyle(geomStyle);
         },
         mouseover: function (e) {
+          console.log("hey - 2")
           e.target.setStyle(geomHoverStyle);
         },
         click: function (e) {
